@@ -27,6 +27,7 @@ private:
 private slots:
 	void					AcceptConnection();
 	void					ReadConnection();
+	void					ConnectionDisconnected();
 
 	void					BroadCastPress_Event();
 };

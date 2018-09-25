@@ -18,12 +18,32 @@ void TCPServer::AcceptConnection()
 	connectionList.push_back(connection);
 	cout << "Connect Number: " << connectionList.size() << endl;
 	connect(connection,				SIGNAL(readyRead()),		this,	SLOT(ReadConnection()));
+	connect(connection,				SIGNAL(disconnected()),		this,	SLOT(ConnectionDisconnected()));
 }
 void TCPServer::ReadConnection()
 {
 	for (int i = 0; i < connectionList.size(); i++)
+		// 確認有東西，這邊可以再改得更好的一點
+		if (connectionList[i]->bytesAvailable() > 0)
+			cout << i << " " << connectionList[i]->readAll().toStdString() << endl;
+}
+void TCPServer::ConnectionDisconnected()
+{
+	// 先抓出哪些要刪掉
+	QVector<int> DisconnectIDList;
+	for (int i = 0; i < connectionList.size(); i++)
+		if (connectionList[i]->state() == QAbstractSocket::UnconnectedState)
+		{
+			cout << "Disconnect: " << i << endl;
+			DisconnectIDList.push_back(i);
+		}
+
+	// 刪除 Connection
+	for (int i = DisconnectIDList.size() - 1; i >= 0; i--)
 	{
-		cout << i << " " << connectionList[i]->readAll().toStdString() << endl;
+		int ID = DisconnectIDList[i];
+		connectionList[i]->close();
+		connectionList.removeAt(ID);
 	}
 }
 

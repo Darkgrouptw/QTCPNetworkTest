@@ -30,4 +30,5 @@ private slots:
 	void		SendPress_Event();
 
 	void		ReadConnectionData();
+	void		ConnectionDisconnected();
 };
